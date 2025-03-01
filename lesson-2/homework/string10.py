@@ -1,0 +1,5 @@
+sentence1 = input("Enter the sentence you want to know number of words in it: ")
+sentence = sentence1.lower()
+word = sentence.split()
+word_count = len(word)
+print("Number of words in sentence:", word_count)
