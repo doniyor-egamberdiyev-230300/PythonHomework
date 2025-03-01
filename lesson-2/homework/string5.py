@@ -1,15 +1,19 @@
-string = input('Enter a string: ')
-string1 = string.lower()
-a = 0
-b = 0
-for char in string1:
- if char.isalpha():
-    if char in 'aeiou':
-        a += 1
-    else:
-        b += 1
+# Get user input
+string = str(input('Enter a string: '))
 
+# Initialize counters
+vowel_count = 0
+consonant_count = 0
+vowels = set('aeiouAEIOU')
 
-print(f"The number of vowels: {a}")
-print(f"The number of consonants: {b}")
+# Single-pass iteration
+for char in str(string):
+    if char.isalpha():
+        if char in vowels:
+            vowel_count += 1
+        else:
+            consonant_count += 1
 
+# Display counts
+print(f"The number of vowels: {vowel_count}")
+print(f"The number of consonants: {consonant_count}")
