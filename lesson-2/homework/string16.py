@@ -1,0 +1,5 @@
+word = input(" Enter the string you want to remove you want character: ")
+a = input("Enter the character you want to remove: ")
+removed_char = word.split(a)
+character = "".join(removed_char)
+print(character)
