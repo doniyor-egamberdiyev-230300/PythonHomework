@@ -5,11 +5,11 @@ from datetime import datetime
 
 
 class Account:
-    def __init__(self, account_number, name, balance=0.0):
+    def __init__(self, account_number, name, balance=0.0, transactions=None):
         self.account_number = account_number
         self.name = name
         self.balance = balance
-        self.transactions = []
+        self.transactions = transactions if transactions is not None else []
 
     def deposit(self, amount):
         if amount > 0:
