@@ -1,5 +1,7 @@
 import json
 import os
+import uuid
+from datetime import datetime
 
 
 class Account:
@@ -7,10 +9,12 @@ class Account:
         self.account_number = account_number
         self.name = name
         self.balance = balance
+        self.transactions = []
 
     def deposit(self, amount):
         if amount > 0:
             self.balance += amount
+            self.transactions.append((datetime.now().isoformat(), "Deposit", amount))
             print(f"Deposited ${amount:.2f}. New balance: ${self.balance:.2f}")
         else:
             print("Deposit amount must be positive.")
@@ -18,12 +22,14 @@ class Account:
     def withdraw(self, amount):
         if 0 < amount <= self.balance:
             self.balance -= amount
+            self.transactions.append((datetime.now().isoformat(), "Withdraw", amount))
             print(f"Withdrew ${amount:.2f}. Remaining balance: ${self.balance:.2f}")
         else:
             print("Invalid withdrawal amount or insufficient balance.")
 
     def to_dict(self):
-        return {"account_number": self.account_number, "name": self.name, "balance": self.balance}
+        return {"account_number": self.account_number, "name": self.name, "balance": self.balance,
+                "transactions": self.transactions}
 
 
 class Bank:
@@ -31,11 +37,11 @@ class Bank:
         self.accounts = {}
         self.load_from_file()
 
+    def generate_account_number(self):
+        return str(uuid.uuid4().int)[:10]
+
     def create_account(self, name, initial_deposit=0.0):
-        account_number = str(len(self.accounts) + 1000)
-        if account_number in self.accounts:
-            print("Account number already exists. Try again.")
-            return
+        account_number = self.generate_account_number()
 
         new_account = Account(account_number, name, initial_deposit)
         self.accounts[account_number] = new_account
@@ -46,22 +52,37 @@ class Bank:
         account = self.accounts.get(account_number)
         if account:
             print(f"Account Number: {account.account_number}\nName: {account.name}\nBalance: ${account.balance:.2f}")
+            print("Transaction History:")
+            for transaction in account.transactions:
+                print(f"{transaction[0]} - {transaction[1]}: ${transaction[2]:.2f}")
         else:
             print("Account not found.")
 
     def deposit(self, account_number, amount):
         account = self.accounts.get(account_number)
         if account:
-            account.deposit(amount)
-            self.save_to_file()
+            try:
+                amount = float(amount)
+                if amount <= 0:
+                    raise ValueError("Deposit must be greater than zero.")
+                account.deposit(amount)
+                self.save_to_file()
+            except ValueError as e:
+                print("Error:", e)
         else:
             print("Account not found.")
 
     def withdraw(self, account_number, amount):
         account = self.accounts.get(account_number)
         if account:
-            account.withdraw(amount)
-            self.save_to_file()
+            try:
+                amount = float(amount)
+                if amount <= 0:
+                    raise ValueError("Withdrawal amount must be positive.")
+                account.withdraw(amount)
+                self.save_to_file()
+            except ValueError as e:
+                print("Error:", e)
         else:
             print("Account not found.")
 
@@ -91,18 +112,21 @@ if __name__ == "__main__":
 
         if choice == "1":
             name = input("Enter your name: ")
-            initial_deposit = float(input("Enter initial deposit: "))
-            bank.create_account(name, initial_deposit)
+            try:
+                initial_deposit = float(input("Enter initial deposit: "))
+                bank.create_account(name, initial_deposit)
+            except ValueError:
+                print("Invalid amount. Please enter a numeric value.")
         elif choice == "2":
             acc_num = input("Enter account number: ")
             bank.view_account(acc_num)
         elif choice == "3":
             acc_num = input("Enter account number: ")
-            amount = float(input("Enter deposit amount: "))
+            amount = input("Enter deposit amount: ")
             bank.deposit(acc_num, amount)
         elif choice == "4":
             acc_num = input("Enter account number: ")
-            amount = float(input("Enter withdrawal amount: "))
+            amount = input("Enter withdrawal amount: ")
             bank.withdraw(acc_num, amount)
         elif choice == "5":
             print("Exiting Bank Application.")
