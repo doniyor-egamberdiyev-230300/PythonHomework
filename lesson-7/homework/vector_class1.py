@@ -6,6 +6,10 @@ class Vector:
         """Initialize an n-dimensional vector."""
         self.components = tuple(components)
 
+    def __str__(self):
+        """Return string representation of the vector."""
+        return f"Vector{self.components}"
+
     def __repr__(self):
         """Return string representation of the vector."""
         return f"Vector{self.components}"
