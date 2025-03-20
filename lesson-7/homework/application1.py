@@ -35,11 +35,11 @@ class Storage:
 
 
 class JSONStorage(Storage):
-    def save(self, tasks, filename="tasks.json"):
+    def save(self, tasks, filename="tasks1.json.json"):
         with open(filename, "w") as file:
             json.dump([task.to_dict() for task in tasks], file)
 
-    def load(self, filename="tasks.json"):
+    def load(self, filename="tasks1.json.json"):
         if not os.path.exists(filename):
             return []
         with open(filename, "r") as file:
@@ -47,14 +47,14 @@ class JSONStorage(Storage):
 
 
 class CSVStorage(Storage):
-    def save(self, tasks, filename="tasks.csv"):
+    def save(self, tasks, filename="tasks1.json.csv"):
         with open(filename, "w", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=["task_id", "title", "description", "due_date", "status"])
             writer.writeheader()
             for task in tasks:
                 writer.writerow(task.to_dict())
 
-    def load(self, filename="tasks.csv"):
+    def load(self, filename="tasks1.json.csv"):
         if not os.path.exists(filename):
             return []
         with open(filename, "r") as file:
